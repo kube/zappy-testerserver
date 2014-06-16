@@ -87,17 +87,19 @@ var botServer = net.createServer(function (socket) {
 	console.log('Bot #' + index + ' connected.');
 	socket.write('Welcome to the server #' + index + ' \r\n');
 
+	var bot = game.createBot(index, );
+
 	/*
 	**	Data Event
 	*/
 	socket.on('data', function(data) {
 		var req = data.toString().split('\n');
 
-		for (var i in req){
+		for (var i in req) {
 			req[i] = req[i].split(' ');
 
 			switch (req[i][0]) {
-				
+
 			}
 		}
 	});
