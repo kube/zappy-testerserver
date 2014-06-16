@@ -7,28 +7,36 @@ var Game = require('./Game.js');
 var	graphicPort = 1337,
 	botPort = 4242;
 
-var	minMapX = 10,
-	maxMapX = 10,
-	minMapY = 10,
-	maxMapY = 10;
+var	MIN_MAP_X = 60,
+	MAX_MAP_X = 60,
+	MIN_MAP_Y = 60,
+	MAX_MAP_Y = 60;
 
 
 /*
 **	Creating Game
 */
-var	width = Math.floor((Math.random() * (maxMapX - minMapX)) + minMapX),
-	height = Math.floor((Math.random() * (maxMapY - minMapY)) + minMapY);
+var	width = Math.floor((Math.random() * (MAX_MAP_X - MIN_MAP_X)) + MIN_MAP_X),
+	height = Math.floor((Math.random() * (MAX_MAP_Y - MIN_MAP_Y)) + MIN_MAP_Y);
 
 var	game = new Game(width, height);
-
 
 
 /*
 **	Creating GfxServer
 */
 var gfxServer = net.createServer(function (socket) {
-	socket.write('Welcome to the server\r\n');
 
+	// Store current connection
+	game.graphicClients.push(socket);
+	var index = game.graphicClients.indexOf(socket);
+
+	console.log('Graphic Client #' + index + ' connected.');
+	socket.write('Welcome to the server #' + index + ' \r\n');
+
+	/*
+	**	Data Event
+	*/
 	socket.on('data', function(data) {
 		var req = data.toString().split('\n');
 
@@ -53,8 +61,16 @@ var gfxServer = net.createServer(function (socket) {
 					break;
 			}
 		}
-
 	});
+
+	/*
+	**	Close current session
+	*/
+	socket.on('close', function() {
+		game.graphicClients.splice(index, 1);
+		console.log('Graphic Client #' + index + ' closed session.');
+	});
+
 }).listen(graphicPort, 'localhost');
 
 
@@ -63,8 +79,17 @@ var gfxServer = net.createServer(function (socket) {
 **	Creating BotServer
 */
 var botServer = net.createServer(function (socket) {
-	socket.write('Welcome to the server\r\n');
 
+	// Store current connection
+	game.botClients.push(socket);
+	var index = game.botClients.indexOf(socket);
+
+	console.log('Bot #' + index + ' connected.');
+	socket.write('Welcome to the server #' + index + ' \r\n');
+
+	/*
+	**	Data Event
+	*/
 	socket.on('data', function(data) {
 		var req = data.toString().split('\n');
 
@@ -72,9 +97,17 @@ var botServer = net.createServer(function (socket) {
 			req[i] = req[i].split(' ');
 
 			switch (req[i][0]) {
-
+				
 			}
 		}
-
 	});
+
+	/*
+	**	Close current session
+	*/
+	socket.on('close', function() {
+		game.botClients.splice(index, 1);
+		console.log('Bot #' + index + ' closed session.');
+	});
+
 }).listen(botPort, 'localhost');
