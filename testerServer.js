@@ -27,7 +27,7 @@ console.log(parameters);
 var	width = parameters.width | Math.floor((Math.random() * (MAX_MAP_X - MIN_MAP_X)) + MIN_MAP_X),
 	height = parameters.height | Math.floor((Math.random() * (MAX_MAP_Y - MIN_MAP_Y)) + MIN_MAP_Y);
 
-var	game = new Game(width, height);
+var	game = new Game(width, height, 10);
 
 
 /*
@@ -93,9 +93,13 @@ var botServer = net.createServer(function (socket) {
 	var index = game.botClients.indexOf(socket);
 
 	console.log('Bot #' + index + ' connected.');
-	socket.write('Welcome to the server #' + index + ' \r\n');
+	socket.write('BIENVENUE\n')
 
-	// var bot = game.createBot(index, );
+	var xpos = Math.floor(Math.random() * game.map.width);
+	var ypos = Math.floor(Math.random() * game.map.height);
+	// N:1, E:2, S:3, O:4
+	var orientation = Math.floor((Math.random() * 4) + 1);
+	var bot = game.createBot(index, xpos, ypos, orientation);
 
 	/*
 	**	Data Event
@@ -104,10 +108,23 @@ var botServer = net.createServer(function (socket) {
 		var req = data.toString().split('\n');
 
 		for (var i in req) {
-			req[i] = req[i].split(' ');
+			if (bot.team !== null) {
+				req[i] = req[i].split(' ');
 
-			switch (req[i][0]) {
+				switch (req[i][0]) {
 
+					case 'connect_nbr':
+						socket.write('' + bot.nb_client + '\n')
+						break;
+					case 'avance':
+						setTimeout
+						socket.write(bot.avance());
+						break;
+				}
+			} else {
+				// Handshake
+				bot.team = req[i];
+				socket.write('' + bot.nb_client + '\n' + game.map.width + ' ' + game.map.height + '\n')
 			}
 		}
 	});
