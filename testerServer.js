@@ -4,11 +4,8 @@ var net = require('net'),
 	parseParameters = require('./parseParameters.js');
 
 /*
-**	Game Properties
+**	Game Constants
 */
-var	graphicPort = 1337,
-	botPort = 4242;
-
 var	MIN_MAP_X = 60,
 	MAX_MAP_X = 60,
 	MIN_MAP_Y = 60,
@@ -16,18 +13,19 @@ var	MIN_MAP_X = 60,
 
 
 /*
-**	Parsing Parameters
+**	Parsing Config
 */
-var parameters = parseParameters(process.argv);
-console.log(parameters);
+var config = parseParameters(process.argv);
+console.log(config);
+
 
 /*
 **	Creating Game
 */
-var	width = parameters.width | Math.floor((Math.random() * (MAX_MAP_X - MIN_MAP_X)) + MIN_MAP_X),
-	height = parameters.height | Math.floor((Math.random() * (MAX_MAP_Y - MIN_MAP_Y)) + MIN_MAP_Y);
+var	width = config.width | Math.floor((Math.random() * (MAX_MAP_X - MIN_MAP_X)) + MIN_MAP_X),
+	height = config.height | Math.floor((Math.random() * (MAX_MAP_Y - MIN_MAP_Y)) + MIN_MAP_Y);
 
-var	game = new Game(width, height, 10, 10, parameters.teams);
+var	game = new Game(width, height, 10, config.teams);
 
 
 /*
@@ -79,7 +77,7 @@ var gfxServer = net.createServer(function (socket) {
 		console.log('Graphic Client #' + index + ' closed session.');
 	});
 
-}).listen(graphicPort, 'localhost');
+}).listen(config.graphicPort, 'localhost');
 
 
 
@@ -97,9 +95,19 @@ var botServer = net.createServer(function (socket) {
 
 	var xpos = Math.floor(Math.random() * game.map.width);
 	var ypos = Math.floor(Math.random() * game.map.height);
+
 	// N:1, E:2, S:3, O:4
 	var orientation = Math.floor((Math.random() * 4) + 1);
-	var bot = game.createBot(index, xpos, ypos, orientation);
+	var bot = game.createBot(socket, index, xpos, ypos, orientation);
+
+	/*
+	**	Socket Response Method
+	*/
+	socket.respond = function(message, time) {
+		setTimeout(function() {
+			socket.write(message + '\n');
+		}, (time / game.t) * 1000);
+	}
 
 	/*
 	**	Data Event
@@ -118,26 +126,21 @@ var botServer = net.createServer(function (socket) {
 						break;
 
 					case 'avance':
-						setTimeout(function() {
-							socket.write(bot.avance());
-						}, (7 / game.t) * 1000);
+						bot.avance();
 						break;
 
 					case 'droite':
-						setTimeout(function() {
-							socket.write(bot.droite());
-						}, (7 / game.t) * 1000);
+						bot.droite();
 						break;
 
 					case 'gauche':
-						setTimeout(function() {
-							socket.write(bot.gauche());
-						}, (7 / game.t) * 1000);
+						bot.gauche();
 						break;
 				}
 			} else {
 				// Handshake
-				bot.team = req[i];
+				bot.team = game.teams[req[i]];
+				console.log(bot.team);
 				socket.write('' + bot.nb_client + '\n' + game.map.width + ' ' + game.map.height + '\n')
 			}
 		}
@@ -147,8 +150,9 @@ var botServer = net.createServer(function (socket) {
 	**	Close current session
 	*/
 	socket.on('close', function() {
-		game.botClients.splice(index, 1);
+		game.removeBot(bot);
+		bot = null;
 		console.log('Bot #' + index + ' closed session.');
 	});
 
-}).listen(botPort, 'localhost');
+}).listen(config.botPort, 'localhost');

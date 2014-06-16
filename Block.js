@@ -9,7 +9,6 @@ var Block = function(map, x, y) {
 	this.y = y;
 	this.map = map;
 
-
 	this.ressources = [];
 	for (var i = 0; i < 7; i++)
 		this.ressources[i] = new Ressource(this, x, y, i);

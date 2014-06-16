@@ -10,7 +10,7 @@ var Game = function(width, height, t, teams) {
 	this.t = t
 	this.botClients = [];
 	this.graphicClients = [];
-	this.teams = teams
+	this.teams = teams;
 
 	this.randomizeMap = function() {
 		for (var i = 0; i < self.map.width; i++)
@@ -23,6 +23,10 @@ var Game = function(width, height, t, teams) {
 		var bot = new Bot(self, number, x, y, orientation);
 		self.botClients[number] = bot;
 		return bot;
+	}
+
+	this.removeBot = function(bot) {
+		self.botClients.splice(self.botClients.indexOf(bot), 1);
 	}
 
 	this.randomizeMap();

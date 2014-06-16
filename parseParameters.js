@@ -1,7 +1,9 @@
+var Team = require('./Team.js');
+
 /*
-**	Default Parameters
+**	Default Config
 */
-var parameters = {
+var config = {
 	graphicPort: 1337,
 	botPort: 4242,
 	width: 0,
@@ -16,7 +18,7 @@ function isParameterHead(arg) {
 	return !!arg.match(reg);
 }
 
-var parseArguments = function(argv) {
+var parseParameters = function(argv) {
 
 	for (var i = 0; i < argv.length; i++) {
 		var arg = argv[i];
@@ -25,7 +27,7 @@ var parseArguments = function(argv) {
 
 				case '-n':
 					for (var k = i + 1; argv[k] && !isParameterHead(argv[k]); k++)
-						parameters.teams.push(argv[k]);
+						config.teams[argv[k]] = new Team(argv[k]);
 					if (k == i + 1) {
 						console.error('Not enough teams');
 						process.exit(1);
@@ -34,38 +36,40 @@ var parseArguments = function(argv) {
 
 				case '-p':
 					if (!isParameterHead(argv[i + 1]))
-						parameters.botPort = parseInt(argv[i + 1]);
+						config.botPort = parseInt(argv[i + 1]);
 					break;
 
 				case '-g':
 					if (!isParameterHead(argv[i + 1]))
-						parameters.graphicPort = parseInt(argv[i + 1]);
+						config.graphicPort = parseInt(argv[i + 1]);
 					break;
 
 				case '-x':
 					if (!isParameterHead(argv[i + 1]))
-						parameters.width = parseInt(argv[i + 1]);
+						config.width = parseInt(argv[i + 1]);
 					break;
 
 				case '-y':
 					if (!isParameterHead(argv[i + 1]))
-						parameters.height = parseInt(argv[i + 1]);
+						config.height = parseInt(argv[i + 1]);
 					break;
 
 				case '-t':
 					if (!isParameterHead(argv[i + 1])) {	
-						parameters.acceptedClients = parseInt(argv[i + 1]);
-						if (parameters.acceptedClients <= 0)
+						config.acceptedClients = parseInt(argv[i + 1]);
+						if (config.acceptedClients <= 0) {	
 							console.error('Invalid time');
-						process.exit(1);
+							process.exit(1);
+						}
 					}
 
 				case '-c':
 					if (!isParameterHead(argv[i + 1])) {	
-						parameters.acceptedClients = parseInt(argv[i + 1]);
-						if (parameters.acceptedClients <= 0)
+						config.acceptedClients = parseInt(argv[i + 1]);
+						if (config.acceptedClients <= 0) {
 							console.error('Invalid accepted clients number');
-						process.exit(1);
+							process.exit(1);
+						}
 					}
 					break;
 
@@ -75,7 +79,7 @@ var parseArguments = function(argv) {
 					break;
 			}
 	}
-	return parameters;
+	return config;
 }
 
-module.exports = parseArguments;
+module.exports = parseParameters;

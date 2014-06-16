@@ -1,4 +1,4 @@
-var Bot = function(game, number, x, y, orientation) {
+var Bot = function(socket, game, number, x, y, orientation) {
 	var self = this;
 
 	// game.map.blocks[x][y].ressources[type]
@@ -7,8 +7,7 @@ var Bot = function(game, number, x, y, orientation) {
 	this.name = number;
 	this.x = x;
 	this.y = y;
-	// N:1, E:2, S:3, O:4
-	this.orientation = orientation;
+	this.orientation = orientation;		// N:1, E:2, S:3, O:4
 	this.level = 1;
 	this.team = null;
 	this.nb_client = 10;
@@ -40,21 +39,22 @@ var Bot = function(game, number, x, y, orientation) {
 				this.x = Math.max(0, this.x - 1);
 				break;
 		}
-		return "ok\n";
+		self.respond('ok', 7);
 	}
 
 	this.droite = function() {
-		this.orientation = (this.orientation + 1) % 5
-		return "ok\n";
+		self.orientation = (self.orientation + 1) % 5;
+		self.respond('ok', 7);
 	}
 
 	this.gauche = function() {
-		if (this.orientation != 0) {
-			this.orientation--;
-		} else {
-			this.orientation = 4;
-		}
-		return "ok\n";
+		self.orientation = (self.orientation - 1 + self.orientation) % 5;
+		self.respond('ok', 7);
+	}
+
+	this.destroy = function() {
+		self.team.removeBot(self);
+		self.block.remoteBot(self);
 	}
 }
 
