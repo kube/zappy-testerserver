@@ -3,13 +3,14 @@ var Bot = require('./Bot.js');
 
 MAX_STONE_PER_BLOCK = 11;
 
-var Game = function(width, height, t) {
+var Game = function(width, height, t, teams) {
 	var self = this;
 
 	this.map = new Map(self, width, height);
 	this.t = t
 	this.botClients = [];
 	this.graphicClients = [];
+	this.teams = teams
 
 	this.randomizeMap = function() {
 		for (var i = 0; i < self.map.width; i++)

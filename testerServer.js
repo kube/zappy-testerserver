@@ -28,7 +28,7 @@ console.log(parameters);
 var	width = parameters.width | Math.floor((Math.random() * (MAX_MAP_X - MIN_MAP_X)) + MIN_MAP_X),
 	height = parameters.height | Math.floor((Math.random() * (MAX_MAP_Y - MIN_MAP_Y)) + MIN_MAP_Y);
 
-var	game = new Game(width, height, 10);
+var	game = new Game(width, height, 10, 10, parameters.teams);
 
 
 /*
@@ -117,9 +117,23 @@ var botServer = net.createServer(function (socket) {
 					case 'connect_nbr':
 						socket.write('' + bot.nb_client + '\n')
 						break;
+
 					case 'avance':
-						setTimeout
-						socket.write(bot.avance());
+						setTimeout(function() {
+							socket.write(bot.avance());
+						}, (7 / game.t) * 1000);
+						break;
+
+					case 'droite':
+						setTimeout(function() {
+							socket.write(bot.droite());
+						}, (7 / game.t) * 1000);
+						break;
+
+					case 'gauche':
+						setTimeout(function() {
+							socket.write(bot.gauche());
+						}, (7 / game.t) * 1000);
 						break;
 				}
 			} else {
