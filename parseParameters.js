@@ -26,8 +26,10 @@ var parseArguments = function(argv) {
 				case '-n':
 					for (var k = i + 1; argv[k] && !isParameterHead(argv[k]); k++)
 						parameters.teams.push(argv[k]);
-					if (k == i + 1)
-						throw new Error('Not enough teams');
+					if (k == i + 1) {
+						console.error('Not enough teams');
+						process.exit(1);
+					}
 					break;
 
 				case '-p':
@@ -54,19 +56,22 @@ var parseArguments = function(argv) {
 					if (!isParameterHead(argv[i + 1])) {	
 						parameters.acceptedClients = parseInt(argv[i + 1]);
 						if (parameters.acceptedClients <= 0)
-							throw new Error('Invalid time');
+							console.error('Invalid time');
+						process.exit(1);
 					}
 
 				case '-c':
 					if (!isParameterHead(argv[i + 1])) {	
 						parameters.acceptedClients = parseInt(argv[i + 1]);
 						if (parameters.acceptedClients <= 0)
-							throw new Error('Invalid accepted clients number');
+							console.error('Invalid accepted clients number');
+						process.exit(1);
 					}
 					break;
 
 				default:
-					throw new Error('Unknown argument ' + arg);
+					console.error('Unknown argument ' + arg);
+					process.exit(1);
 					break;
 			}
 	}
