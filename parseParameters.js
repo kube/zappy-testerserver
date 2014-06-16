@@ -24,8 +24,10 @@ var parseArguments = function(argv) {
 			switch (arg) {
 
 				case '-n':
-					for (var k = i + 1; !isParameterHead(argv[k]); k++)
+					for (var k = i + 1; argv[k] && !isParameterHead(argv[k]); k++)
 						parameters.teams.push(argv[k]);
+					if (k == i + 1)
+						throw new Error('Not enough teams');
 					break;
 
 				case '-p':

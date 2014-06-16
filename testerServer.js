@@ -21,7 +21,6 @@ var	MIN_MAP_X = 60,
 var parameters = parseParameters(process.argv);
 console.log(parameters);
 
-
 /*
 **	Creating Game
 */
