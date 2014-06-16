@@ -1,5 +1,7 @@
-var net = require('net');
-var Game = require('./Game.js');
+#!/usr/bin/env node
+var net = require('net'),
+	Game = require('./Game.js'),
+	parseParameters = require('./parseParameters.js');
 
 /*
 **	Game Properties
@@ -14,10 +16,17 @@ var	MIN_MAP_X = 60,
 
 
 /*
+**	Parsing Parameters
+*/
+var parameters = parseParameters(process.argv);
+console.log(parameters);
+
+
+/*
 **	Creating Game
 */
-var	width = Math.floor((Math.random() * (MAX_MAP_X - MIN_MAP_X)) + MIN_MAP_X),
-	height = Math.floor((Math.random() * (MAX_MAP_Y - MIN_MAP_Y)) + MIN_MAP_Y);
+var	width = parameters.width | Math.floor((Math.random() * (MAX_MAP_X - MIN_MAP_X)) + MIN_MAP_X),
+	height = parameters.height | Math.floor((Math.random() * (MAX_MAP_Y - MIN_MAP_Y)) + MIN_MAP_Y);
 
 var	game = new Game(width, height);
 
@@ -87,7 +96,7 @@ var botServer = net.createServer(function (socket) {
 	console.log('Bot #' + index + ' connected.');
 	socket.write('Welcome to the server #' + index + ' \r\n');
 
-	var bot = game.createBot(index, );
+	// var bot = game.createBot(index, );
 
 	/*
 	**	Data Event
