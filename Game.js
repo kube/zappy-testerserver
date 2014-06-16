@@ -3,10 +3,11 @@ var Bot = require('./Bot.js');
 
 MAX_STONE_PER_BLOCK = 11;
 
-var Game = function(width, height) {
+var Game = function(width, height, t) {
 	var self = this;
 
 	this.map = new Map(self, width, height);
+	this.t = t
 	this.botClients = [];
 	this.graphicClients = [];
 
@@ -17,9 +18,9 @@ var Game = function(width, height) {
 					self.map.blocks[i][j].ressources[k] = Math.floor(Math.random() * MAX_STONE_PER_BLOCK);
 	}
 
-	this.createBot = function(number, x, y, orientation, level, team) {
-		var bot = new Bot(self, number, x, y, orientation, level, team);
-		this.bots[number] = bot;
+	this.createBot = function(number, x, y, orientation) {
+		var bot = new Bot(self, number, x, y, orientation);
+		self.botClients[number] = bot;
 		return bot;
 	}
 
