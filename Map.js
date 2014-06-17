@@ -21,17 +21,8 @@ var Map = function(game, width, height) {
 	initBlocks();
 
 	this.getBlock = function(x, y) {
-
-		console.log(x);
-		console.log(y);
-		console.log(self.width);
-		console.log(self.height);
-
 		x = (x % self.width + self.width) % self.width;
 		y = (y % self.height + self.height) % self.height;
-
-		console.log(x);
-		console.log(y);
 		return self.blocks[x][y];
 	}
 

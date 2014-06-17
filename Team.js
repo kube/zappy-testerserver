@@ -1,17 +1,17 @@
-var Team = function(name) {
+var Team = function(game, name, acceptedClients) {
 	var self = this;
 
 	this.name = name;
 	var _bots = [];
 
-	this.nb_client = 10;
+	this.acceptedClients = acceptedClients;
 
 	this.addBot = function(bot) {
-		if (self.nb_client) {
+		if (self.acceptedClients) {
 			_bots.push(bot);
 			bot.team = self;
-			self.nb_client--;
-			console.log('NEW NB_CLIENT : ' + self.nb_client)
+			self.acceptedClients--;
+			bot.send(self.acceptedClients + '\n' + game.map.width + ' ' + game.map.height, 0);
 		}
 	}
 

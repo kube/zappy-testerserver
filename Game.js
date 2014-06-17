@@ -1,16 +1,21 @@
-var Map = require('./Map.js');
-var Bot = require('./Bot.js');
+var	Map = require('./Map.js'),
+	Bot = require('./Bot.js'),
+	Team = require('./Team.js');
 
 MAX_STONE_PER_BLOCK = 11;
 
-var Game = function(width, height, t, teams) {
+var Game = function(width, height, t, teams, acceptedClients) {
 	var self = this;
 
 	this.map = new Map(self, width, height);
 	this.t = t
 	this.bots = [];
 	this.graphicClients = [];
-	this.teams = teams;
+	this.teams = [];
+
+	this.createTeam = function(name) {
+		self.teams[name] = new Team(self, name, acceptedClients);
+	}
 
 	this.randomizeMap = function() {
 		for (var i = 0; i < self.map.width; i++)
@@ -28,10 +33,6 @@ var Game = function(width, height, t, teams) {
 
 	this.removeBot = function(bot) {
 		self.bots.splice(self.bots.indexOf(bot), 1);
-	}
-
-	this.alertGfx = function() {
-		
 	}
 
 	this.randomizeMap();

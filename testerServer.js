@@ -14,7 +14,11 @@ console.log(config);
 /*
 **	Creating Game
 */
-var	game = new Game(config.width, config.height, config.time, config.teams);
+var	game = new Game(config.width, config.height, config.time, config.teams, config.acceptedClients);
+
+// Create Teams
+for (var i in config.teams)
+	game.createTeam(config.teams[i]);
 
 
 /*
@@ -41,7 +45,7 @@ var gfxServer = net.createServer(function (socket) {
 			switch (req[i][0]) {
 
 				case 'msz':
-					console.log(req[i]);
+					// console.log(req[i]);
 					socket.write(game.map.response.msz());
 					break;
 
@@ -90,6 +94,8 @@ var botServer = net.createServer(function (socket) {
 	var bot = game.createBot(socket);
 	console.log('Bot #' + bot.name + ' connected.');
 	socket.write('BIENVENUE\n')
+
+	console.log(bot);
 
 	/*
 	**	Data Event

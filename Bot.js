@@ -43,16 +43,25 @@ var Bot = function(game, socket) {
 		self.block = self.game.map.blocks[self.x][self.y];
 		self.block.addBot(self);
 		socket.respond('ok', 7);
+
+		// Alert GFX
+		self.sendPositionToGFX();
 	}
 
 	this.droite = function() {
 		self.orientation = self.orientation % 4 + 1;
 		socket.respond('ok', 7);
+
+		// Alert GFX
+		self.sendPositionToGFX();
 	}
 
 	this.gauche = function() {
 		self.orientation = (self.orientation - 2 + 4) % 4 + 1;
 		socket.respond('ok', 7);
+
+		// Alert GFX
+		self.sendPositionToGFX();
 	}
 
 	this.inventaire = function() {
@@ -155,14 +164,15 @@ var Bot = function(game, socket) {
 
 		console.log(req);
 		if (!self.team) {
+			console.log('JOINING : `' + req[0] + '`');
 			game.teams[req[0]].addBot(self);
-			socket.write('' + self.team.nb_client + '\n' + game.map.width + ' ' + game.map.height + '\n')
+			self.alertPopGFX();
 		}
 		else
 			switch (req[0]) {
 
 				case 'connect_nbr':
-					socket.write('' + self.team.nb_client + '\n')
+					socket.write('' + self.team.acceptedClients + '\n')
 					break;
 
 				case 'avance':
@@ -198,6 +208,48 @@ var Bot = function(game, socket) {
 					break;
 			}
 	}
+
+
+	/*
+	**	Graphic Events
+	*/
+	this.alertPopGFX = function(client) {
+		var message = 'pnw '
+				+ self.x + ' '
+				+ self.y + ' '
+				+ self.orientation + ' '
+				+ self.level + ' '
+				+ self.team.name + '\n';
+
+		if (client)
+			client.write(message);
+		else
+			for (var i in game.graphicClients)
+				game.graphicClients[i].write(message);
+	}
+
+	this.sendPositionToGFX = function(client) {
+		var message = 'ppo '
+				+ self.x + ' '
+				+ self.y + ' '
+				+ self.orientation + '\n';
+
+		if (client)
+			client.write(message);
+		else
+			for (var i in game.graphicClients)
+				game.graphicClients[i].write(message);
+	}
+
+
+	/*
+	**	Send message
+	*/
+	this.send = function(message, time) {
+		setTimeout(function() {
+			socket.write(message + '\n');
+		}, time);
+	};
 
 	this.destroy = function() {
 		self.team.removeBot(self);

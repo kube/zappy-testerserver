@@ -3,10 +3,10 @@ var Team = require('./Team.js');
 /*
 **	Game Constants
 */
-var	MIN_MAP_X = 6,
-	MAX_MAP_X = 6,
-	MIN_MAP_Y = 6,
-	MAX_MAP_Y = 6;
+var	MIN_MAP_X = 40,
+	MAX_MAP_X = 40,
+	MIN_MAP_Y = 40,
+	MAX_MAP_Y = 40;
 
 /*
 **	Default Config
@@ -17,7 +17,7 @@ var config = {
 	width: Math.floor((Math.random() * (MAX_MAP_X - MIN_MAP_X)) + MIN_MAP_X),
 	height: Math.floor((Math.random() * (MAX_MAP_Y - MIN_MAP_Y)) + MIN_MAP_Y),
 	teams: [],
-	acceptedClients: 10,
+	acceptedClients: 13,
 	time: 7
 }
 
@@ -35,7 +35,7 @@ var parseParameters = function(argv) {
 
 				case '-n':
 					for (var k = i + 1; argv[k] && !isParameterHead(argv[k]); k++)
-						config.teams[argv[k]] = new Team(argv[k]);
+						config.teams.push(argv[k]);
 					if (k == i + 1) {
 						console.error('Not enough teams');
 						process.exit(1);
@@ -70,6 +70,7 @@ var parseParameters = function(argv) {
 							process.exit(1);
 						}
 					}
+					break;
 
 				case '-c':
 					if (!isParameterHead(argv[i + 1])) {	
