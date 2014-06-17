@@ -64,8 +64,8 @@ var parseParameters = function(argv) {
 
 				case '-t':
 					if (!isParameterHead(argv[i + 1])) {	
-						config.acceptedClients = parseInt(argv[i + 1]);
-						if (config.acceptedClients <= 0) {	
+						config.time = parseInt(argv[i + 1]);
+						if (config.time <= 0) {	
 							console.error('Invalid time');
 							process.exit(1);
 						}

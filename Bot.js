@@ -8,8 +8,8 @@ var Bot = function(game, socket) {
 	this.game = game;
 	this.name = null;
 
-	this.x = Math.floor(Math.random() * game.map.width);;
-	this.y = Math.floor(Math.random() * game.map.height);;
+	this.x = Math.floor(Math.random() * game.map.width);
+	this.y = Math.floor(Math.random() * game.map.height);
 
 	// N:1, E:2, S:3, O:4
 	this.orientation = Math.floor((Math.random() * 4) + 1);
@@ -40,6 +40,9 @@ var Bot = function(game, socket) {
 			self.x = (self.x + sign + self.width) % self.width;
 
 		// Add Bot to its new Block
+		console.log(self.x);
+		console.log(self.y);
+
 		self.block = self.game.map.blocks[self.x][self.y];
 		self.block.addBot(self);
 		socket.respond('ok', 7);
@@ -153,7 +156,7 @@ var Bot = function(game, socket) {
 
 		console.log(req);
 		if (!self.team) {
-			self.team = game.teams[req[0]];
+			game.teams[req[0]].addBot(self);
 			socket.write('' + self.team.nb_client + '\n' + game.map.width + ' ' + game.map.height + '\n')
 		}
 		else
