@@ -8,7 +8,7 @@ var Game = function(width, height, t, teams) {
 
 	this.map = new Map(self, width, height);
 	this.t = t
-	this.botClients = [];
+	this.bots = [];
 	this.graphicClients = [];
 	this.teams = teams;
 
@@ -16,17 +16,18 @@ var Game = function(width, height, t, teams) {
 		for (var i = 0; i < self.map.width; i++)
 			for (var j = 0; j < self.map.height; j++)
 				for (var k = 0; k < 7; k++)
-					self.map.blocks[i][j].ressources[k] = Math.floor(Math.random() * MAX_STONE_PER_BLOCK);
+					self.map.blocks[i][j].ressources[k].update(Math.floor(Math.random() * MAX_STONE_PER_BLOCK));
 	}
 
-	this.createBot = function(number, x, y, orientation) {
-		var bot = new Bot(self, number, x, y, orientation);
-		self.botClients[number] = bot;
+	this.createBot = function(socket) {
+		var bot = new Bot(self, socket);
+		self.bots.push(bot);
+		bot.name = self.bots.indexOf(bot);
 		return bot;
 	}
 
 	this.removeBot = function(bot) {
-		self.botClients.splice(self.botClients.indexOf(bot), 1);
+		self.bots.splice(self.bots.indexOf(bot), 1);
 	}
 
 	this.randomizeMap();

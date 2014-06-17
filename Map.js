@@ -20,10 +20,10 @@ var Map = function(game, width, height) {
 	}
 	initBlocks();
 
-	this.displayRessource = function(type) {
-		for (var i in self.blocks)
-			for (var j in self.blocks[i])
-				self.blocks[i][j].displayRessource(type);
+	this.getBlock = function(x, y) {
+		x = (x + self.width) % self.width;
+		y = (y + self.height) % self.height;
+		return self.blocks[x][y];
 	}
 
 	/*

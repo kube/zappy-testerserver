@@ -1,13 +1,21 @@
 var Team = require('./Team.js');
 
 /*
+**	Game Constants
+*/
+var	MIN_MAP_X = 6,
+	MAX_MAP_X = 6,
+	MIN_MAP_Y = 6,
+	MAX_MAP_Y = 6;
+
+/*
 **	Default Config
 */
 var config = {
 	graphicPort: 1337,
 	botPort: 4242,
-	width: 0,
-	height: 0,
+	width: Math.floor((Math.random() * (MAX_MAP_X - MIN_MAP_X)) + MIN_MAP_X),
+	height: Math.floor((Math.random() * (MAX_MAP_Y - MIN_MAP_Y)) + MIN_MAP_Y),
 	teams: [],
 	acceptedClients: 10,
 	time: 7

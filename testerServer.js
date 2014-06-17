@@ -3,14 +3,6 @@ var net = require('net'),
 	Game = require('./Game.js'),
 	parseParameters = require('./parseParameters.js');
 
-/*
-**	Game Constants
-*/
-var	MIN_MAP_X = 60,
-	MAX_MAP_X = 60,
-	MIN_MAP_Y = 60,
-	MAX_MAP_Y = 60;
-
 
 /*
 **	Parsing Config
@@ -22,10 +14,7 @@ console.log(config);
 /*
 **	Creating Game
 */
-var	width = config.width | Math.floor((Math.random() * (MAX_MAP_X - MIN_MAP_X)) + MIN_MAP_X),
-	height = config.height | Math.floor((Math.random() * (MAX_MAP_Y - MIN_MAP_Y)) + MIN_MAP_Y);
-
-var	game = new Game(width, height, 10, config.teams);
+var	game = new Game(config.width, config.height, config.time, config.teams);
 
 
 /*
@@ -80,28 +69,13 @@ var gfxServer = net.createServer(function (socket) {
 }).listen(config.graphicPort, 'localhost');
 
 
-
 /*
 **	Creating BotServer
 */
 var botServer = net.createServer(function (socket) {
 
-	// Store current connection
-	game.botClients.push(socket);
-	var index = game.botClients.indexOf(socket);
-
-	console.log('Bot #' + index + ' connected.');
-	socket.write('BIENVENUE\n')
-
-	var xpos = Math.floor(Math.random() * game.map.width);
-	var ypos = Math.floor(Math.random() * game.map.height);
-
-	// N:1, E:2, S:3, O:4
-	var orientation = Math.floor((Math.random() * 4) + 1);
-	var bot = game.createBot(socket, index, xpos, ypos, orientation);
-
 	/*
-	**	Socket Response Method
+	**	Create Socket Delayed Response Method
 	*/
 	socket.respond = function(message, time) {
 		setTimeout(function() {
@@ -110,40 +84,21 @@ var botServer = net.createServer(function (socket) {
 	}
 
 	/*
+	**	Store current Connection & Create Bot
+	*/
+	var bot = game.createBot(socket);
+	console.log('Bot #' + bot.name + ' connected.');
+	socket.write('BIENVENUE\n')
+
+	/*
 	**	Data Event
 	*/
 	socket.on('data', function(data) {
 		var req = data.toString().split('\n');
 
-		for (var i in req) {
-			if (bot.team !== null) {
-				req[i] = req[i].split(' ');
-
-				switch (req[i][0]) {
-
-					case 'connect_nbr':
-						socket.write('' + bot.nb_client + '\n')
-						break;
-
-					case 'avance':
-						bot.avance();
-						break;
-
-					case 'droite':
-						bot.droite();
-						break;
-
-					case 'gauche':
-						bot.gauche();
-						break;
-				}
-			} else {
-				// Handshake
-				bot.team = game.teams[req[i]];
-				console.log(bot.team);
-				socket.write('' + bot.nb_client + '\n' + game.map.width + ' ' + game.map.height + '\n')
-			}
-		}
+		// Send all requests to the Bot
+		for (var i in req)
+			bot.request(req[i].split(' '));
 	});
 
 	/*
@@ -151,8 +106,8 @@ var botServer = net.createServer(function (socket) {
 	*/
 	socket.on('close', function() {
 		game.removeBot(bot);
+		console.log('Bot #' + bot.name + ' closed session.');
 		bot = null;
-		console.log('Bot #' + index + ' closed session.');
 	});
 
 }).listen(config.botPort, 'localhost');

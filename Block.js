@@ -1,4 +1,5 @@
-var Ressource = require('./Ressource.js');
+var Ressource = require('./Ressource.js'),
+	ressourcesNames = require('./ressourcesNames.js');
 
 var Block = function(map, x, y) {
 	var self = this;
@@ -11,15 +12,15 @@ var Block = function(map, x, y) {
 
 	this.ressources = [];
 	for (var i = 0; i < 7; i++)
-		this.ressources[i] = new Ressource(this, x, y, i);
+		this.ressources[i] = new Ressource(game, i);
 
 	this.response = {
 		bct: function() {
-			return ('bct ' + self.x + ' ' + self.y + ' ' + self.ressources[0] + ' ' + self.ressources[1] + ' ' +self.ressources[2] + ' ' + self.ressources[3] + ' ' + self.ressources[4] + ' ' + self.ressources[5] + ' ' + self.ressources[6] + '\n');
+			return ('bct ' + self.x + ' ' + self.y + ' ' + self.ressources[0].quantity + ' ' + self.ressources[1].quantity + ' ' +self.ressources[2].quantity + ' ' + self.ressources[3].quantity + ' ' + self.ressources[4].quantity + ' ' + self.ressources[5].quantity + ' ' + self.ressources[6].quantity + '\n');
 		}
 	}
 
-	this.pushBot = function(bot) {
+	this.addBot = function(bot) {
 		if (_bots.indexOf(bot) == -1)
 			_bots.push(bot);
 	}
@@ -31,6 +32,27 @@ var Block = function(map, x, y) {
 
 	this.getBots = function() {
 		return _bots;
+	}
+
+	this.getContent = function(playerAsking) {
+
+		var string = '';
+
+		for (var i in _bots){
+			if (_bots[i] != playerAsking) {
+				if (string != '')
+					string += ' ';
+				string += 'joueur';
+			}
+		}
+		for (var i in self.ressources) {
+			for (var j = 0; j < self.ressources[i].quantity; j++) {
+				if (string != '')
+					string += ' ';
+				string += ressourcesNames[i];
+			}
+		}
+		return string;
 	}
 }
 
