@@ -54,6 +54,16 @@ var Block = function(map, x, y) {
 		}
 		return string;
 	}
+
+	this.countBotsAtLevel = function(level) {
+		var nb = 0;
+
+		for (var i in _bots) {
+			if (_bots[i].level == level)
+				nb++;
+		}
+		return nb;
+	}
 }
 
 module.exports = Block;

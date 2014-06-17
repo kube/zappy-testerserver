@@ -1,5 +1,6 @@
 var Ressource = require('./Ressource.js'),
-	ressourcesNames = require('./ressourcesNames.js');
+	ressourcesNames = require('./ressourcesNames.js'),
+	elevationRequirements = require('./elevationRequirements.js');
 
 var Bot = function(game, socket) {
 	var self = this;
@@ -121,6 +122,30 @@ var Bot = function(game, socket) {
 			socket.respond('ko', 7);
 	}
 
+	this.incantation = function() {
+
+		var valid = true,
+			players = self.block.countBotsAtLevel(self.level);
+
+		if (players >= elevationRequirements[self.level].players) {
+			for (var i = 1; i < 7; i++) {
+				if (self.block.ressources[i] < elevationRequirements[self.level][i])
+					valid = false;
+			}
+		}
+		else
+			valid = false;
+
+		if (valid) {
+			socket.write('elevation en cours\n');
+			setTimeout(function() {
+				self.level++;
+				socket.write('niveau actuel : ' + self.level + '\n')
+			}, (300 / game.t) * 1000);
+		}
+
+	}
+
 
 	/*
 	**	Request Execution
@@ -165,6 +190,10 @@ var Bot = function(game, socket) {
 
 				case 'prend':
 					self.prend(req[1]);
+					break;
+
+				case 'incantation':
+					self.incantation(req[1]);
 					break;
 			}
 	}
