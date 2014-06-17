@@ -35,14 +35,11 @@ var Bot = function(game, socket) {
 		self.block.removeBot(self);
 
 		if (self.orientation % 2)
-			self.y = (self.y + sign + self.height) % self.height;
+			self.y = (self.y + sign + game.map.height) % game.map.height;
 		else
-			self.x = (self.x + sign + self.width) % self.width;
+			self.x = (self.x + sign + game.map.width) % game.map.width;
 
 		// Add Bot to its new Block
-		console.log(self.x);
-		console.log(self.y);
-
 		self.block = self.game.map.blocks[self.x][self.y];
 		self.block.addBot(self);
 		socket.respond('ok', 7);
@@ -91,7 +88,7 @@ var Bot = function(game, socket) {
 				}
 				var block = self.game.map.getBlock(xa, ya);
 				if (i > 0 || j > 0)
-					response += ', '
+					response += ', ';
 				response += block.getContent(self);
 			}
 			fov += 2;
@@ -129,6 +126,8 @@ var Bot = function(game, socket) {
 		var valid = true,
 			players = self.block.countBotsAtLevel(self.level);
 
+		if (self.level >= 8)
+			return ;
 		if (players >= elevationRequirements[self.level].players) {
 			for (var i = 1; i < 7; i++) {
 				if (self.block.ressources[i] < elevationRequirements[self.level][i])
