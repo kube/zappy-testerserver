@@ -15,7 +15,6 @@ var Bot = function(game, socket) {
 	this.orientation = Math.floor((Math.random() * 4) + 1);
 	this.level = 1;
 	this.team = null;
-	this.nb_client = 10;
 
 	this.ressources = [];
 	for (var i = 0; i < 7; i++)
@@ -155,13 +154,13 @@ var Bot = function(game, socket) {
 		console.log(req);
 		if (!self.team) {
 			self.team = game.teams[req[0]];
-			socket.write('' + self.nb_client + '\n' + game.map.width + ' ' + game.map.height + '\n')
+			socket.write('' + self.team.nb_client + '\n' + game.map.width + ' ' + game.map.height + '\n')
 		}
 		else
 			switch (req[0]) {
 
 				case 'connect_nbr':
-					socket.write('' + self.nb_client + '\n')
+					socket.write('' + self.team.nb_client + '\n')
 					break;
 
 				case 'avance':

@@ -2,8 +2,13 @@ var Team = function(name) {
 	this.name = name;
 	var _bots = [];
 
+	this.nb_client = 10;
+
 	this.addBot = function(bot) {
-		_bots.push(bot);
+		if (self.nb_client) {
+			_bots.push(bot);
+			self.nb_client--;
+		}
 	}
 
 	this.removeBot = function(bot) {

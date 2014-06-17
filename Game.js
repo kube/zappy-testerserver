@@ -30,6 +30,10 @@ var Game = function(width, height, t, teams) {
 		self.bots.splice(self.bots.indexOf(bot), 1);
 	}
 
+	this.alertGfx = function() {
+		
+	}
+
 	this.randomizeMap();
 }
 

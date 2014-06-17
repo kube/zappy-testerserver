@@ -78,9 +78,10 @@ var botServer = net.createServer(function (socket) {
 	**	Create Socket Delayed Response Method
 	*/
 	socket.respond = function(message, time) {
+		var time_ms = parseInt((time / game.t) * 1000);
 		setTimeout(function() {
 			socket.write(message + '\n');
-		}, (time / game.t) * 1000);
+		}, time_ms);
 	}
 
 	/*
